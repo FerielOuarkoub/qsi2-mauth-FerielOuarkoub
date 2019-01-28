@@ -67,15 +67,16 @@ const getUser = ({ id }) =>
       : Promise.reject(new Error('UNKOWN OR DELETED USER'))
   );
 
-const deleteUser = (user) => {
-  user.deletedAt = new Date();
-  return Users.update(user, { where: { id: user.id }, returning: true }).then(user =>
-    omit(
-    )
-  ).catch(err => {
-    logger.error(`💥 Failed to delete user : ${err.stack}`);
-  })
-};
+const deleteUser = id => {
+  Users.destroy({
+    where: { id }
+  }).then(user =>
+    user && !user.deletedAt
+      ? omit(user, Users.all)
+      : Promise.reject(new Error('UNKOWN OR DELETED USER'))
+  );
+}
+
 module.exports = {
   createUser,
   updateUser,
