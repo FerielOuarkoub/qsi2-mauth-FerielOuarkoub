@@ -1,11 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
-
 const db = {};
 const basename = path.basename(module.filename);
-
-const sequelize = new Sequelize(process.env.DATABASE_URL);
+const sequelize = new Sequelize({ host: 'localhost', dialect: 'sqlite', storage: path.join(__dirname, 'database.sqlite') });
 fs.readdirSync(__dirname)
   .filter(
     file =>

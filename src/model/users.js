@@ -71,7 +71,7 @@ module.exports = (sequelize, DataTypes) => {
 
   // anonymous function mandatody to access this in instance method
   /* eslint func-names:off */
-  Users.prototype.comparePassword = function(password) {
+  Users.prototype.comparePassword = function (password) {
     return new Promise((resolve, reject) => {
       bcrypt.compare(password, this.hash, (err, res) => {
         if (err || !res) {
@@ -82,5 +82,9 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
+  Users.associate = models => {
+    Users.hasOne(models.Group, { foreignKey: 'own_id', as: 'owner' });
+    Users.belongsToMany(models.Group, { through: 'Member' });
+  };
   return Users;
 };
