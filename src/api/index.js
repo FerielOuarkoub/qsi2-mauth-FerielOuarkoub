@@ -1,7 +1,10 @@
 const express = require('express');
+const hpp = require('hpp');
+const helmet = require('helmet');
+const enforce = require('express-sslify');
 const { apiUsers, apiUsersProtected } = require('./users');
 const { isAuthenticated, initAuth } = require('../controller/auth');
-const { apiGroup } = require('./group');
+const { apiGroup, publicApiGroup } = require('./group');
 // create an express Application for our api
 const api = express();
 initAuth();
@@ -15,12 +18,15 @@ apiRoutes
     .get('/', (req, res) =>
         res.status(200).send({ message: 'hello from my api' })
     )
+
+
     // connect api users router
     .use('/users', apiUsers)
     // api bellow this middelware require Authorization
     .use(isAuthenticated)
     .use('/users', apiUsersProtected)
     .use('/group', apiGroup)
+    .use('/group', publicApiGroup)
     .use((err, req, res, next) => {
         res.status(403).send({
             success: false,
@@ -31,4 +37,7 @@ apiRoutes
 
 // root of our API will be http://localhost:5000/api/v1
 api.use('/api/v1', apiRoutes);
+api.use(hpp());
+api.use(helmet());
+api.use(enforce.HTTPS());
 module.exports = api;

@@ -31,9 +31,23 @@ const addMember = (userId, groupId) =>
         }
     }).then(group => { return group.addUsers(userId) }
     );
+const deleteMember = (userId, groupId) =>
+    Group.findOne({
+        where: {
+            id: groupId
+        }
+    }).then(group => {
+        return group.removeUsers(userId);
+    }
+    );
+
+
+const getAllGroups = () => Group.findAll();
 
 module.exports = {
     createGroup,
     addMember,
-    groupOwner
+    groupOwner,
+    deleteMember,
+    getAllGroups
 };
